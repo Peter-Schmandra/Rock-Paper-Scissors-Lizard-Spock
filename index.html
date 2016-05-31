@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>RPSLSLK</title>
+		<style>
+			.box {
+				display: inline-block;
+				position: relative;
+				left: 0;
+				vertical-align:top; /*added*/
+				width: 180px;
+				height: 150px;
+				border: 2px solid #a1a1a1;
+				background: #dddddd;
+			}
+			.player_move_button {
+				width: 100px;
+			}
+		</style>
+		<script src="js/jquery-2.1.1.min.js"></script>
+		<script src="js/rpsls_bot.js"></script>
+		<script type="text/javascript">
+			var round = 0;
+			var humanTotalWins = 0;
+			var botTotalWins = 0;
+			var totalTies = 0;
+			var moves = {1:"Rock", 2:"Paper", 3:"Scissors", 4:"Lizard", 5:"Spock"};
+			var bot = new Bot();
+			var winMatrix = new Array(5);
+			
+			for (i = 1; i < 6; i++) {
+				winMatrix[i] = new Array(5);
+			}
+			
+			winMatrix[1][1] = 0;
+			winMatrix[1][2] = 1;
+			winMatrix[1][3] = -1;
+			winMatrix[1][4] = -1;
+			winMatrix[1][5] = 1;
+			
+			winMatrix[2][1] = -1;
+			winMatrix[2][2] = 0;
+			winMatrix[2][3] = 1;
+			winMatrix[2][4] = 1;
+			winMatrix[2][5] = -1;
+			
+			winMatrix[3][1] = 1;
+			winMatrix[3][2] = -1;
+			winMatrix[3][3] = 0;
+			winMatrix[3][4] = -1;
+			winMatrix[3][5] = 1;
+			
+			winMatrix[4][1] = 1;
+			winMatrix[4][2] = -1;
+			winMatrix[4][3] = 1;
+			winMatrix[4][4] = 0;
+			winMatrix[4][5] = -1;
+			
+			winMatrix[5][1] = -1;
+			winMatrix[5][2] = 1;
+			winMatrix[5][3] = -1;
+			winMatrix[5][4] = 1;
+			winMatrix[5][5] = 0;
+
+			$(document).ready(function() {
+				$('.player_move_button').click(function() {
+					var humanMove = parseInt(this.id);
+					var botMove = bot.throwMove();
+					var result = getResult(humanMove, botMove);
+				
+					bot.addResult(result, humanMove);
+					
+					if(result == 0){
+						totalTies++;
+						$('#tie_box_value').text(totalTies);
+					}
+					
+					if(result == -1){
+						humanTotalWins++;
+						$('#human_win_box_value').text(humanTotalWins);
+					}
+					
+					if(result == 1){
+						botTotalWins++;
+						$('#bot_win_box_value').text(botTotalWins);
+					}
+					
+					$('#bot_bot').text("Bot played " + moves[botMove]);
+					round++;
+					$('#round').text(round);
+				});
+			});
+			
+			function getResult(humanMove, botMove) {
+				return winMatrix[humanMove][botMove];
+			}
+		</script>
+	</head>
+	<body>
+		ROUND: <span id='round'></span></hr>
+		<div id="container" style="background-color:red;overflow:hidden;width:1000px;height:190px;">
+			<div class="box" id="player_box">
+				<input type="button" name="Rock" id="1" class="player_move_button" value="ROCK">
+				<input type="button" name="Rock" id="2" class="player_move_button" value="PARER">
+				<input type="button" name="Rock" id="3" class="player_move_button" value="SCISSORS">
+				<input type="button" name="Rock" id="4" class="player_move_button" value="LIZARD">
+				<input type="button" name="Rock" id="5" class="player_move_button" value="SPOCK">
+			</div>
+			<div class="box" id="player_win_box">
+				<div>PLAYER WIN</div>
+				<div id="human_win_box_value">0</div>
+			</div>
+			<div class="box" id="tie_box">
+				<div>TIE</div>
+				<div id="tie_box_value">0</div>
+			</div>
+			<div class="box" id="bot_win_box">
+				<div>BOT WIN</div>
+				<div id="bot_win_box_value">0</div>
+			</div>
+			<div class="box" id="bot_bot">0</div>	
+		</div>
+	</body>
+</html>
